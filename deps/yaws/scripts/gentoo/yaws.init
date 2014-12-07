@@ -1,0 +1,53 @@
+#!/sbin/runscript
+#
+# Startup script for the Yaws Web Server (for Gentoo Linux)
+#
+# config: /etc/conf.d/yaws
+#
+# description: yaws - Erlang enabled http server
+#
+# use: rc-update add yaws default
+#
+
+yaws=%bindir%/yaws
+
+# By default we run with the default id
+# idopts="--id myserverid"
+
+conf="--conf %etcdir%/yaws/yaws.conf"
+
+opts="start stop reload restart query"
+
+depend() {
+       need net
+}
+
+
+start() {
+       ebegin "Starting yaws "
+       ${yaws} --daemon  --heart ${idopts} ${conf}
+       ${yaws} ${idopts} --wait-started=10
+       eend $?
+}
+
+
+stop() {
+       ebegin "Stopping yaws "
+       ${yaws} ${idopts} --stop
+       ${yaws} ${idopts} --wait-stopped=10
+       eend $?
+}
+
+
+reload() {
+       ebegin "Reloading yaws "
+       ${yaws} ${idopts} --hup
+       eend $?
+}
+
+query() {
+       ebegin "Querying yaws "
+       ${yaws} ${idopts} --status
+       eend $?
+}
+

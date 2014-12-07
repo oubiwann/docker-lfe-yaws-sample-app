@@ -1,0 +1,76 @@
+#!/bin/sh
+#
+# Start up for the Yaws daemon. Use this script for FreeBSD versions 9 or greater.
+#
+
+# REQUIRE: DAEMON
+# PROVIDE: yaws
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name=yaws
+rcvar=yaws_enable
+
+command="%bindir%/yaws"
+
+yaws_id="default" # By default we run with the default id
+start_cmd="yaws_start"
+stop_cmd="yaws_stop"
+status_cmd="yaws_status"
+reload_cmd="yaws_reload"
+command_args=""
+extra_commands="reload"
+required_files="%etcdir%/yaws/yaws.conf"
+
+yaws_start() {
+    echo -n "Starting Yaws: "
+    ${command} --id ${yaws_id} --daemon --heart --conf %etcdir%/yaws/yaws.conf ${rc_flags}
+    ${command} --id ${yaws_id} --wait-started=10 > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+    return  $RETVAL
+}
+
+yaws_stop() {
+    echo -n "Stopping Yaws: "
+    ${command} --id ${yaws_id} --stop > /dev/null
+    ${command} --id ${yaws_id} --wait-stopped=10 > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+    return  $RETVAL
+}
+
+yaws_status() {
+    ${command} --id ${yaws_id} --status > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        echo "Yaws is running"
+    else
+        echo "Yaws is stopped"
+    fi
+    return  $RETVAL
+}
+
+yaws_reload() {
+    echo -n "Reloading Yaws: "
+    ${command} --id ${yaws_id} --hup > /dev/null
+    RETVAL=$?
+    if [ $RETVAL = 0 ]; then
+        echo "OK"
+    else
+        echo "FAILED"
+    fi
+    return  $RETVAL
+}
+
+load_rc_config $name
+run_rc_command "$1"

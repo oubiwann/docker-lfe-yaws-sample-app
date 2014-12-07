@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Used by scripts/Makefile and scripts/rebar-pre-script to generate
+# the yaws execution script
+
+set -e
+
+cat yaws.template                            | \
+    ./Subst %yawsdir% "${YAWSDIR}"           | \
+    ./Subst %vardir%  "${VARDIR}"            | \
+    ./Subst %run_erl% "${ERLBINDIR}/run_erl" | \
+    ./Subst %to_erl%  "${ERLBINDIR}/to_erl"  | \
+    ./Subst %erl%     "${ERL}"               | \
+    ./Subst %werl%    "${WERL}"
+
+exit 0

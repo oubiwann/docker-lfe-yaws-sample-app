@@ -1,0 +1,122 @@
+Tomas Abrahamsson
+Manuel Durán Aguete
+Fabian Alenius
+Jason Andersson
+Per Andersson
+Joe Armstrong
+Michael Arnoldus
+Oleg Avdeev
+Tuncer Ayaz
+Stu Bailey
+Kuzma Bartosz
+Eric Baur
+Johan Bevemyr
+Martin Björklund
+Dominique Boucher
+Adam Bozanich
+Richard Bucker
+Yinso Chen
+Gaspar Chilingarov
+Mats Cronqvist
+Anders Dahlin
+Robert David
+Willem de Jong
+François de Metz
+doccarcass
+dnz@bk.ru
+Colm Dougan
+Hans-Christian Esperer
+Daniel Fabian
+Christopher Faulet
+John Fessenden
+Michael Fig
+Bruce Fitzsimmons
+Magnus Fröberg
+Olivier Girondel
+Sergei Golovan
+Luke Gorrie
+Igor Goryachev
+Joakim Grebenö
+Paul Hampson
+Per Hedeland
+Christian Hennig
+Sean Hinde
+hun@n-dimensional.de
+Wes James
+jcortner@cvol.net
+joe_e_e
+Phanikar.K
+Dimitriy Kargapolov
+Mikael Karlsson
+Bengt Kleberg
+Petter Larsson
+James Lee
+Ahti Legonkov
+Peter Lemenkov
+Michael Leonhard
+Eric Liang
+Fredrik Linder
+Fabian Linzberger
+Daniel Luna
+Paul Mahon
+Davide Marquês
+Brady McCary
+Tom McNulty
+Chandru Mullaparthi
+Hans Ulrich Niedermann
+Chris Newcombe
+Julian Noble
+Joseph Wayne Norton
+Anders Nygren
+Thomas O'Dowd
+Jimmy Olgeni
+Lennart Ostman
+Karel Ostrovsky
+Erik Pearson
+Jean-Sébastien Pédron
+Yurii Rashkovskii
+Praveen Ray
+Matthew Reilly
+Mickael Remond
+Bruno Rijsman
+Bill Robertsson
+Jouni Ryno
+Yariv Sadan
+Kostis Sagonas
+Rob Schmersel
+Carsten Schultz
+Yariv Sedan
+Vance Shipley
+Alexander Simonov
+Michael Slaski
+Leon Smith
+Hal Snyder
+Andrei Soroker
+Matt Stancliff
+Sebastian Stroll
+Taavi Talvik
+Brian Templeton
+Nicolas Thauvin
+Fredrik Thulin
+Torbjörn Törnqvist
+Tjeerd van der Laan
+Pablo Vieytes
+Steve Vinoski
+Lev Walkin
+wde
+John Webb
+David Welton
+Claes Wikström
+Dan Willemsen
+Haobu Yu
+Liu Yubao
+Tomas Selander
+Ulf Wiger
+Garret Smith
+Nicolas Adiba
+Kalle Zetterlund
+Tjeerd van der Laan
+Kaloyan Dimitrov
+Karolis Petrauskas 
+Johannes Weißl
+Jean-Sébastien Pédron
