@@ -2,16 +2,13 @@ ETC_DIR = ./etc
 YAWS_DIR = $(DEPS)/yaws
 YAWS = $(YAWS_DIR)/bin/yaws
 YAWS_CONF = $(ETC_DIR)/yaws.conf
-YAWS_SERVER_ID = changeme
+YAWS_SERVER_ID = sampleapp
 
-app-deps:
-	@mkdir -p logs
-
-dev: app-deps compile-no-deps
+dev: compile-no-deps
 	@ERL_LIBS=$(shell lfetool info erllibs) \
 	$(YAWS) -i --conf $(YAWS_CONF) --id $(YAWS_SERVER_ID)
 
-daemon: app-deps compile
+daemon: compile
 	@ERL_LIBS=$(shell lfetool info erllibs) \
 	$(YAWS) -D --heart --conf $(YAWS_CONF) --id $(YAWS_SERVER_ID)
 
