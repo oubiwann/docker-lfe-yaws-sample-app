@@ -1,5 +1,6 @@
 #!/bin/bash
 
-$YAWS_DIR/bin/yaws -D --heart \
+cd $APP_DIR && $YAWS_DIR/bin/yaws \
+    -D --heart \
     --conf $APP_DIR/etc/yaws.conf \
     --id $YAWS_APP_ID
