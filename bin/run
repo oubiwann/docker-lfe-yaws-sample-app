@@ -1,0 +1,3 @@
+$YAWS_DIR/bin/yaws -i
+    --conf $APP_DIR/etc/yaws.conf \
+    --id $YAWS_APP_ID
