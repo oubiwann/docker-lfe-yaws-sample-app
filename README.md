@@ -1,31 +1,19 @@
 # sample-app
 
+*An example repo for running LFE and custom LFE apps in Docker*
 
 ## Introduction
 
-Add content to me here!
+This repo is featured in the
+[LFE blog post](http://blog.lfe.io/tutorials/2014/12/07/1837-running-lfe-in-docker/)
+about running LFE and LFE apps in Docker containers.
 
-
-## Installation
-
-Just add it to your ``rebar.config`` deps:
-
-```erlang
-  {deps, [
-    ...
-    {sample-app, ".*",
-      {git, "git@github.com:YOURNAME/sample-app.git", "master"}}
-      ]}.
-```
-
-And then do the usual:
+## Use
 
 ```bash
-    $ rebar get-deps
-    $ rebar compile
+$ git clone git@github.com:oubiwann/docker-lfe-yaws-sample-app.git
+$ cd docker-lfe-yaws-sample-app
+$ docker build .
 ```
 
-
-## Usage
-
-Add content to me here!
+For more details, you'll just need to read the blog post linked above ;-)
