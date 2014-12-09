@@ -1,0 +1,13 @@
+ebin
+deps/*/ebin
+deps/*/.rebar
+logs
+deps/yaws/c_src/*.d
+deps/lfe
+deps/yaws/bin
+deps/yaws/etc
+deps/yaws/src/mime_types.erl
+deps/yaws/src/yaws_appdeps.hrl
+deps/yaws/src/yaws_charset.hrl
+deps/yaws/src/yaws_generated.erl
+deps/yaws/test/t11/include
