@@ -1,22 +1,7 @@
 # lutil
 
-[![][lutil-logo]][lutil-logo-large]
 
-[lutil-logo]: resources/images/lutil-x250.png
-[lutil-logo-large]: resources/images/lutil-x700.png
-
-*Utility functions for LFE*
-
-##### Contents
-
-* [Introduction](#introduction-)
-* [Dependencies](#dependencies-)
-* [Installation](#installation-)
-* [Usage](#usage-)
-  * [Modules](#modules-)
-  * [Macros](#macros-)
-
-## Introduction [&#x219F;](#contents)
+## Introduction
 
 lutil offers several modules and macros with convenience functions that can
 be easily incorported into projects without having to re-implement these
@@ -38,31 +23,32 @@ Macros include:
  * ``mnesia-macros.lfe``
  * ``predicates.lfe``
 
+## Dependencies
 
-## Dependencies [&#x219F;](#contents)
+This project assumes that you have [rebar](https://github.com/rebar/rebar)
+installed somwhere in your ``$PATH``.
 
-As of version 0.7.0, this project assumes that you have
-[rebar3](https://github.com/rebar/rebar3) installed somwhere in your ``$PATH``.
-It no longer uses the old version of rebar. If you do not wish to use rebar3,
-you may use the most recent rebar2-compatible release of lutil: 0.6.7.
+This project depends upon the following, which installed to the ``deps``
+directory of this project when you run ``make deps``:
 
 
-## Installation [&#x219F;](#contents)
+## Installation
 
 In your ``rebar.config`` file, update your ``deps`` section to include
 ``lutil``:
 
 ```erlang
 {deps, [
+  {lfe, ".*", {git, "git://github.com/rvirding/lfe.git"}},
+  {ltest, ".*", {git, "git://github.com/lfex/ltest.git"}},
   {lutil, ".*", {git, "git://github.com/lfex/lutil.git"}}
 ]}
 ```
 
 
-## Usage [&#x219F;](#contents)
+## Usage
 
-
-### Modules [&#x219F;](#contents)
+### Modules
 
 For the modules, usage is the same as any other Erlang or LFE library :-)
 
@@ -85,11 +71,61 @@ For the modules, usage is the same as any other Erlang or LFE library :-)
 #B(99 101 102 102 54 53 97 50 45 48 57 55 49 45 52 50 49 49 45 50 52 ...)
 ```
 
+### Macros
 
-### Macros [&#x219F;](#contents)
+lutil offers several Clojure-alike macros:
+ * ``get-in`` (supports lists, proplists, orddicts, dicts, and maps)
+ * ``->>`` and ``->``
+ * predicates of the ``name?`` form
 
-lutil offers the ``create-table`` macro for use with more easily working
-generating Mnesia tables. Example usage is available [here](https://github.com/oubiwann/mnesia-tutorial/blob/master/src/structure.lfe).
+Here's an example of the ``get-in`` macro:
 
-If you are looking for the Clojure macros which used to be in lutil, they have
-since been moved to their [own project](https://github.com/lfex/clj).
+```cl
+> (set data '(#(key-1 val-1)
+              #(key-2 val-2)
+              #(key-3 (#(key-4 val-4)
+                       #(key-5 val-5)
+                       #(key-6 (#(key-7 val-7)
+                                #(key-8 val-8)))))))
+...
+> (include-lib "lutil/include/core.lfe")
+loaded-core
+> (get-in data 'key-1)
+val-1
+> (get-in data 'key-3 'key-5)
+val-5
+> (get-in data 'key-3 'key-6 'key-8)
+val-8
+> (get-in data 'key-19)
+undefined
+> (get-in data 'key-3 'key-6 'key-89 'key-100)
+undefined
+
+```
+
+Here's an example of the thrushing macro, ``->>``:
+
+```cl
+> (include-lib "lutil/include/compose.lfe")
+loaded-compose
+> (->> (seq 42)
+       (lists:map (lambda (x) (math:pow x 2)))
+       (lists:filter (compose #'even?/1 #'round/1))
+       (take 10)
+       (lists:foldl #'+/2 0))
+1540.0
+```
+
+Note that, without the thrushing macro, this would be written as such:
+
+```cl
+> (lists:foldl #'+/2 0
+    (take 10
+      (lists:filter
+        (compose #'even?/1 #'round/1)
+        (lists:map
+          (lambda (x)
+            (math:pow x 2))
+          (seq 42)))))
+1540.0
+```
