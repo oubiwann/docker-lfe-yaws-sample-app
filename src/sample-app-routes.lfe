@@ -1,8 +1,8 @@
 (defmodule sample-app-routes
   (export all))
 
-(include-file "deps/exemplar/include/html-macros.lfe")
-(include-file "deps/lfest/include/macros.lfe")
+(include-file "exemplar/include/html-macros.lfe")
+(include-file "lfest/include/lfest-routes.lfe")
 
 (defroutes
   ('GET "/"
