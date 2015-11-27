@@ -4,19 +4,18 @@
     (from lutil-math
       (even? 1))
     (from lutil-type
-      (atom? 1)
-      (list? 1)
       (partition-list 1))))
 
-(include-lib "exemplar/include/macros.lfe")
+(include-lib "exemplar/include/xml-macros.lfe")
+(include-lib "clj/include/predicates.lfe")
 
-(defun space () '" ")
+(defun space () " ")
 
-(defun slash () '"/")
+(defun slash () "/")
 
-(defun opening-bracket () '"<")
+(defun opening-bracket () "<")
 
-(defun closing-bracket () '">")
+(defun closing-bracket () ">")
 
 (defun self-closing-bracket ()
   (++ (space)
@@ -36,14 +35,14 @@
 
 (defun attr-to-string (name value)
   (++ (atom_to_list name)
-      '"=\""
+      "=\""
       value
-      '"\" "))
+      "\" "))
 
 (defun attrs-to-string (attrs)
   (let (((tuple names values) (partition-list attrs)))
-    (: lists concat
-      (: lists zipwith #'attr-to-string/2 names values))))
+    (lists:concat
+      (lists:zipwith #'attr-to-string/2 names values))))
 
 (defun -opening-tag (tag bracket)
   (++ (opening-bracket)
@@ -54,7 +53,7 @@
   (++ (opening-bracket)
       tag
       (space)
-      (: lutil-text strip (attrs-to-string attrs))
+      (lutil-text:strip (attrs-to-string attrs))
       bracket))
 
 (defun opening-tag (tag)

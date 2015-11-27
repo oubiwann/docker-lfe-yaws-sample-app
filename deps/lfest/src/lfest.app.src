@@ -1,16 +1,16 @@
 %% -*- erlang -*-
-{application, 'lfest',
+{application, lfest,
  [
   %% A quick description of the application.
-  {description, "My project description..."},
+  {description, "Macros and functions for routing apps and services in LFE+Yaws"},
 
   %% The version of the application
-  {vsn, "0.0.1"},
+  {vsn, "0.2.0"},
 
   %% All modules used by the application.
   {modules,
    [
-    'lfest'
+    lfest
    ]},
 
   %% All of the registered names the application uses. This can be ignored.

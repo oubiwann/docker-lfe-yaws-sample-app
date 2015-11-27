@@ -46,6 +46,19 @@
   "Get the .eunit directory for the current directory."
   (get-local-dir ".eunit"))
 
+(defun get-cwd ()
+  "The current workding directory in this case is the directory that the user
+  executed lfetool *from*. Shortly after it starts up, the lfetool script
+  switches from this dir to the actual directory where the lfetool code/library
+  lives. To preserve the original cwd, it is passed as a parameter to erl
+  during start up. That value is accessed with this function."
+  (caar
+    (element 2 (get-arg 'cwd "."))))
+
+(defun get-home-dir ()
+  (caar
+    (element 2 (get-arg 'home #(ok (("/tmp")))))))
+
 (defun get-deps ()
   (get-deps `(,(get-deps-dir))))
 
@@ -224,7 +237,10 @@
 (defun get-beam-behaviours (beam)
   "Given an atom representing a plugin's name, return its module
   attributes."
-  (get-behaviour (get-beam-attrs beam)))
+  (let ((behavs (get-behaviour (get-beam-attrs beam))))
+    (case behavs
+      ('undefined '())
+      (_ behavs))))
 
 ;; provided for the spelling-impaired
 (defun get-beam-behaviors (beam)
@@ -284,16 +300,3 @@
       ('error
         `#(default ((,default))))
       (_ arg-value))))
-
-(defun get-cwd ()
-  "The current workding directory in this case is the directory that the user
-  executed lfetool *from*. Shortly after it starts up, the lfetool script
-  switches from this dir to the actual directory where the lfetool code/library
-  lives. To preserve the original cwd, it is passed as a parameter to erl
-  during start up. That value is accessed with this function."
-  (caar
-    (element 2 (get-arg 'cwd "."))))
-
-(defun get-home-dir ()
-  (caar
-    (element 2 (get-arg 'home #(ok (("/tmp")))))))

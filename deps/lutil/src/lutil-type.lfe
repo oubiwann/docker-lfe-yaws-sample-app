@@ -3,6 +3,8 @@
 (defmodule lutil-type
   (export all))
 
+(include-lib "clj/include/predicates.lfe")
+
 (defun add-tuples (a b)
   "Given two tuples, add them together."
   (add-tuples (list a b)))
@@ -52,6 +54,48 @@
 (defun second-wins (key val1 val2)
   val2)
 
+(defun get-in (data keys)
+  "DEPRECATED
+
+  This function was not intended to be used directly (though one certainly
+  might have) but rather was to be used via the macro that used to be defined
+  in include/core.lfe.
+
+  That macro is now in the clj library in include/seq.lfe and the get-in
+  function is in the module clj-seq.lfe.
+  "
+  ;; XXX We'll take the cheap way out right now and assume (uh-oh ...) that
+  ;; any error here will be keys or indices not found, and thus return
+  ;; undefined. Might be better to only do this for function_clause errors ...
+  (try
+    (cond ((proplist? data) (get-in-proplist data keys))
+          ((dict? data) (get-in-dict data keys))
+          ((list? data) (get-in-list data keys))
+          ((map? data) (get-in-map data keys)))
+    (catch (_
+      'undefined))))
+
+(defun get-in-list (data indices)
+  (lists:foldl #'lists:nth/2 data indices))
+
+(defun get-in-proplist (data keys)
+  (lists:foldl #'proplists:get_value/2 data keys))
+
+(defun get-in-dict (data keys)
+  (get-in-kv #'dict:fetch/2 data keys))
+
+(defun get-in-map (data keys)
+  (get-in-kv #'maps:get/2 data keys))
+
+(defun get-in-kv
+  ((func data (cons key keys))
+    (let ((value (funcall func key data)))
+      (if (orelse (proplist? value)
+                  (dict? value)
+                  (map? value))
+          (get-in value keys)
+          value))))
+
 (defun host->tuple (host)
   (let ((`#(ok ,tuple) (inet:getaddr host 'inet)))
     tuple))
@@ -67,56 +111,16 @@
     (eval `(tuple ,@quoted))))
 
 (defun atom-cat (atom-1 atom-2)
-  "Concatenate two tuples."
+  "Concatenate two atoms."
   (list_to_atom (++ (atom_to_list atom-1) (atom_to_list atom-2))))
 
-(defun string? (data)
-  (io_lib:printable_list data))
-
-(defun unicode? (data)
-  (io_lib:printable_unicode_list data))
-
-(defun list? (data)
-  (and (is_list data) (not (string? data))))
-
-(defun tuple? (data)
-  (is_tuple data))
-
-(defun atom? (data)
-  (is_atom data))
-
-(defun binary? (data)
-  (is_binary data))
-
-(defun bitstring? (data)
-  (is_bitstring data))
-
-(defun bool? (data)
-  (is_boolean data))
-
-(defun float? (data)
-  (is_float data))
-
-(defun function? (data)
-  (is_function data))
-
-(defun function? (data arity)
-  (is_function data arity))
-
-(defun integer? (data)
-  (is_integer data))
-
-(defun number? (data)
-  (is_number data))
-
-(defun record? (data record-tag)
-  (is_record data record-tag))
-
-(defun record? (data record-tag size)
-  (is_record data record-tag size))
-
-(defun reference? (data)
-  (is_reference data))
+(defun atom-cat (list-of-atoms)
+  "Concatenate n atoms."
+  (list_to_atom
+    (lists:foldl
+        (lambda (x acc) (++ acc (atom_to_list x)))
+        ""
+        list-of-atoms)))
 
 ;; The zip/2, zip/3, and zip/4 implementations are for kicks; probably *much*
 ;; better to use Erlang's lists:zip/2 and lists:zip3/3. There's no zip/4, so

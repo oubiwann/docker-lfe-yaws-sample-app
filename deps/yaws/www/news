@@ -1,3 +1,13 @@
+Mon Jul 13 19:27:06 CEST 2015 Yaws 2.0
+Fix Yaws build for Erlang 18.0 (now() deprecated)
+Renew self-signed ssl certificat to use the right signature algorithm
+support for the SSL 'log_alert' option
+expires fixes
+Fix possible XSS in yaws_outmod:crashmsg/3
+rebar work.
+Rework how SSL protocol_version is handled
+Many minor bugfixes, tests and also docs.
+ 
 Tue Nov 11 17:17:37 CET 2014 Yaws 1.99
 Major release, many enhancenements and bugfixes. Too many to list actually, see the git logs. The major ones though:
 combine multiple Accept-Encoding headers (steve)
@@ -26,7 +36,6 @@ More rebar support (Steve, Tuncer)
 Fix option to enable/disable sendfile support in the configure script. file:sendfile/5 implementation is buggy (in R15 & R16). When async-threads are enabled, in efile driver, the tcp socket is set in blocking mode and thesendfile syscall is executed on an async-thread. So an unresponsive client could block it for a very long time and therefore block the async-thread. In this way, all async-threads could be easily blocked. So, by default, the use of sendfile is disable.  (capflam)
 Add support of many options for tcp/ssl sockets (capflam)
 Fix mime_types.erl generation for a local installation of Yaws,  (capflam)
-
 
 Tue Mar 19 17:53:00 CET 2013 Yaws 1.96
 Websocket release, lots of work and rewrites of the websocket code which is now topnotch.
@@ -460,8 +469,6 @@ Added call to callback  function: M:F(cookie_expire) which is expected to return
 Extending yaws_api:find_cookie_val/2 to accept an #arg record as second argument as well. (tobbe)
 tweaked the haXe documentation (yariv)
 
-
-
 Sun Dec 17 20:58:21 CET 2006 version 1.66
 Followup to the previous soap release.
 Adding entry for the yaws_soap_lib man-page (tobbe)
@@ -541,7 +548,6 @@ Support clients that POST data with Transfer-Encoding chunked. This is used by s
 Tmp dir patch by Karel Ostrovsky to better support tmp dir on Windows
 cgi port patch by joe_e_e
 Do not send the server	port along with the host name in the CGI HTTP_HOST environment	variable. Added HTTP_HOST env variable for CGI 	scripts (was required by sphpblog). (mikl)
-
 
 Thu Jun 16 13:42:50 CEST 2005, Version 1.56, Security update release.
 A bug was found by Daniel Fabian, SEC-Consult Unternehmensberatung GmbH whereby: If a null byte is appended to the filename of a yaws script (.yaws), the yaws webserver returns a page containing the source code of the  according script. This flaw allows a malicious attacker to analyse the source code of the entire web application, which might result in the attacker gaining sensitive information like passwords. All versions of yaws older than 1.56 are vulnerable.

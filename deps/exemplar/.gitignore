@@ -1,0 +1,13 @@
+*.beam
+*.o
+*.plt
+*.sublime-project
+*.sublime-workspace
+.eunit
+bin/expm
+debug-*
+deps
+ebin/*
+erl_crash.dump
+.rebar
+bin

@@ -1,6 +1,12 @@
-# exemplar [![Build Status](https://travis-ci.org/lfex/exemplar.png?branch=master)](https://travis-ci.org/lfex/exemplar)
+# exemplar [![Build Status][travis-badge]][travis]
 
-<a href="https://raw.github.com/oubiwann/exemplar/master/resources/images/juggernaut-large.png"><img src="resources/images/juggernaut-tiny.png"/></a><br/>
+[travis]: https://travis-ci.org/lfex/exemplar
+[travis-badge]: https://travis-ci.org/lfex/exemplar.png?branch=master
+
+[![][juggernaut-tiny]][juggernaut-large]
+
+[juggernaut-tiny]: resources/images/juggernaut-tiny.png
+[juggernaut-large]: resources/images/juggernaut-large.png
 
 *Markup Language Expressions for LFE: creating HTML with s-expressions on the Erlang VM.*
 
@@ -9,14 +15,16 @@
 
 ### Supported Tags
 
-<a href="https://raw.github.com/oubiwann/exemplar/master/resources/images/HTML5_Logo_512.png"><img src="resources/images/HTML5_Logo_tiny.png"/></a><br/>
+[![][html5_logo]][html5_logo]
+
+[html5_logo]: resources/images/HTML5_Logo_tiny.png
 
 Right now, only HTML5 is supported. Feel free to submit pull requests to support
 older/different tags/elements.
 
-The list of tags was obtained from
-<a href="https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/HTML5_element_list">Mozilla's
-HTML 5 documentation</a>
+The list of tags was obtained from [Mozilla's HTML 5 documentation][mz]
+
+[mz]: https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/HTML5_element_list
 
 Note that XML namespacing hasn't been explored yet, but *should* be possible.
 
@@ -60,18 +68,17 @@ directory of this project when you run ``make deps``:
 Just add it to your ``rebar.config`` deps:
 
 ```erlang
-    {deps, [
-        ...
-        {exemplar, ".*", {git, "git@github.com:lfe/exemplar.git", "master"}}
-      ]}.
+{deps, [
+    ...
+    {exemplar, ".*", {git, "git@github.com:lfex/exemplar.git", "master"}}
+  ]}.
 ```
 
 And then do the usual:
 
 ```bash
-
-    $ rebar get-deps
-    $ rebar compile
+$ rebar get-deps
+$ rebar compile
 ```
 
 
@@ -84,29 +91,29 @@ And then do the usual:
 Start the REPL:
 
 ```bash
-    $ make shell
+$ make shell
 ```
 
 Then, from a clone of exemplar:
 
-```lisp
-    > (slurp '"src/exemplar-html.lfe")
-    #(ok exemplar-html)
-    > (html (body (div (p '"Here is somem content")))))
+```lfe
+> (slurp "src/exemplar-html.lfe")
+#(ok exemplar-html)
+> (html (body (div (p "Here is some content")))))
 ```
 
 Or, from your own project with exemplar as a dep:
 
-```lisp
-    > (slurp '"deps/exemplar/src/exemplar-html.lfe")
-    #(ok exemplar-html)
-    > (html (body (div (p '"Here is somem content")))))
+```lfe
+> (slurp "deps/exemplar/src/exemplar-html.lfe")
+#(ok exemplar-html)
+> (html (body (div (p "Here is some content")))))
 ```
 
 Which will give the following output
 
 ```html
-    "<html><body><div><p>Here is somem content</p></div></body></html>"
+"<html><body><div><p>Here is some content</p></div></body></html>"
 ```
 
 
@@ -115,27 +122,27 @@ Which will give the following output
 You can create your own elements, too. In your project that has exemplar set
 up as a dependency, create a module and ``include-lib`` the macros file:
 
-```cl
+```lfe
 (defmodule my-project
   (export all))
 
-(include-lib "deps/exemplar/include/macros.lfe")
+(include-lib "exemplar/include/xml-macros.lfe")
 
 (defelem custom-elem)
 ```
 
 Then, you can ``make shell``, ``slurp`` that file, and use your new element:
 
-```cl
-    > (slurp '"src/my-project.lfe")
-    #(ok my-project)
-    > (custom-elem (custom-elem '"much wow"))
+```lfe
+> (slurp "src/my-project.lfe")
+#(ok my-project)
+> (custom-elem (custom-elem "much wow"))
 ```
 
 Which will give the following output
 
 ```html
-    "<custom-elem><custom-elem>much wow</custom-elem></custom-elem>"
+"<custom-elem><custom-elem>much wow</custom-elem></custom-elem>"
 ```
 
 #### Current Limitations
@@ -144,11 +151,11 @@ Right now, the ``defelem`` macro which generates all the HTML functions only
 generates functions with three different arities. For instance,
 ``include/html-macros.lfe`` defines the ``div`` element:
 
-```cl
+```lfe
 (defelem div)
 ```
 
-The ``defelem`` macro in ``include/macros.lfe`` generates three functions with
+The ``defelem`` macro in ``include/xml-macros.lfe`` generates three functions with
 this definition:
 
 * ``div/0``
@@ -158,36 +165,36 @@ this definition:
 We can see these three aritiies in action by slurping ``src/exemplar-html.lfe``
 and calling these functions:
 
-```cl
-    > (slurp '"src/exemplar-html.lfe")
-    #(ok exemplar-html)
-    > (div)
-    "<div />"
-    > (div '"some content")
-    "<div>some content</div>"
-    > (div '(class "some-css") '"some content")
-    "<div class=\"some-css\">some content</div>"
+```lfe
+> (slurp "src/exemplar-html.lfe")
+#(ok exemplar-html)
+> (div)
+"<div />"
+> (div "some content")
+"<div>some content</div>"
+> (div '(class "some-css") "some content")
+"<div class=\"some-css\">some content</div>"
 ```
 
 What this means is that (for now) you cannot do something like this:
 
-```cl
-    > (div (p '"paragraph 1") (p '"paragraph 2") (p '"paragraph 3"))
-    exception error: #(unbound_func #(div 3))
+```lfe
+> (div (p "paragraph 1") (p "paragraph 2") (p "paragraph 3"))
+exception error: #(unbound_func #(div 3))
 ```
 
 Since there is no ``#'div/3``. Instead, you will have to do this:
 
-```cl
-    > (div (list (p '"paragraph 1") (p '"paragraph 2") (p '"paragraph 3")))
-    "<div><p>paragraph 1</p><p>paragraph 2</p><p>paragraph 3</p></div>"
+```lfe
+> (div (list (p "paragraph 1") (p "paragraph 2") (p "paragraph 3")))
+"<div><p>paragraph 1</p><p>paragraph 2</p><p>paragraph 3</p></div>"
 ```
 
 Another common use case:
 
-```cl
-    > (ul (list (li '"a") (li '"b") (li '"c")))
-    "<ul><li>a</li><li>b</li><li>c</li></ul>"
+```lfe
+> (ul (list (li "a") (li "b") (li "c")))
+"<ul><li>a</li><li>b</li><li>c</li></ul>"
 ```
 
 Note that the 1-arity generated functions have some smarts: in addition to being
@@ -195,20 +202,20 @@ able to handle lists of elements, they can also handle lists of attributes and
 string content. You've seen the string content and list arguments above; here's
 ``#'div/1`` with attributes:
 
-```cl
-    > (div '(id "div-1" class "big"))
-    "<div id=\"div-1\" class=\"big\" />"
+```lfe
+> (div '(id "div-1" class "big"))
+"<div id=\"div-1\" class=\"big\" />"
 ```
 
 Here's an example using a variable:
 
-```cl
-    > (set class '"bigger")
-    "bigger"
-    > (div `(id "div-1" class ,class))
-    "<div id=\"div-1\" class=\"bigger\" />"
-    > (div (list 'id '"div-1" 'class class))
-    "<div id=\"div-1\" class=\"bigger\" />"
+```lfe
+> (set class "bigger")
+"bigger"
+> (div `(id "div-1" class ,class))
+"<div id=\"div-1\" class=\"bigger\" />"
+> (div (list 'id "div-1" 'class class))
+"<div id=\"div-1\" class=\"bigger\" />"
 ```
 
 
@@ -221,22 +228,22 @@ macros.
 For instance, let's say you had a YAWS project that was configured like so:
 
 ```apache
-      logdir = logs
-      ebin_dir = deps/yaws/var/yaws/ebin
-      ebin_dir = ebin
-      log_resolve_hostname = false
-      fail_on_bind_err = true
+logdir = logs
+ebin_dir = deps/yaws/var/yaws/ebin
+ebin_dir = ebin
+log_resolve_hostname = false
+fail_on_bind_err = true
 
-      <server localhost>
-              port = 5099
-              listen = 0.0.0.0
-              appmods = </, my-project>
-              docroot = www
-      </server>
+<server localhost>
+        port = 5099
+        listen = 0.0.0.0
+        appmods = </, my-project>
+        docroot = www
+</server>
 ```
 
 Then the ``my-project.lfe`` file might look something like this:
-```cl
+```lfe
 (defmodule my-project
   (export all))
 
@@ -244,35 +251,35 @@ Then the ``my-project.lfe`` file might look something like this:
 
 (defun out (arg-data)
   "This function is executed by YAWS. It is the YAWS entry point for our app."
-  (let ((path-info (: string tokens
+  (let ((path-info (string:tokens
                       (parse-path arg-data)
-                      '"/")))
+                      "/")))
     (routes path-info arg-data)))
 
 (defun routes
   "Routes for our app."
   ;; /content/:id
-  (((list '"content" item-id) arg-data)
+  (((list "content" item-id) arg-data)
    (content-api item-id arg-data))
   ;; potentially many other routes
   ...
   ;; When nothing matches, do this
   ((path method arg)
-    (: io format
-      '"Unmatched route!~n Path-info: ~p~n arg-data: ~p~n~n"
+    (io:format
+      "Unmatched route!~n Path-info: ~p~n arg-data: ~p~n~n"
       (list path arg))
-    (make-error-response '"Unmatched route.")))
+    (make-error-response "Unmatched route.")))
 
 (defun make-html-response (html)
   (tuple 'content
-         '"text/html"
+         "text/html"
          html))
 
 (defun content-api (id request-data)
   ;; pull content from a data store
-  (let ((fetched-title '"Queried Title")
-        (fetched-content '"Some super-great queried lorem ipsum."))
-    (: {{PROJECT}}-util make-200-result
+  (let ((fetched-title "Queried Title")
+        (fetched-content "Some super-great queried lorem ipsum."))
+    ({{PROJECT}}-util:make-200-result
       (html
         (list
             (head
@@ -282,7 +289,7 @@ Then the ``my-project.lfe`` file might look something like this:
                 (div '(class "dynamic content")
                   (list
                     (h1 fetched-title)
-                    (h2 (++ '"Item " item-id))
+                    (h2 (++ "Item " item-id))
                     (div (p fetched-content)))))))))))
 ```
 
@@ -295,15 +302,15 @@ generate partial HTML and have parameters/variables for addition HTML to be
 passed.
 
 If you'd like to see this example running, download
-<a href="https://github.com/lfe/lfetool">lfetool</a>, install it, and then
+[lfetool](https://github.com/lfex/lfetool), install it, and then
 execute these commands:
 ```bash
-  $ lfetool new yaws my-web-proj
-  $ cd my-web-proj
-  $ make dev
+$ lfetool new yaws my-web-proj
+$ cd my-web-proj
+$ make dev
 ```
 
-Then point your browser at <a href="http://localhost:5099/">http://localhost:5099/</a>.
+Then point your browser at [http://localhost:5099/](http://localhost:5099/).
 
 For more information on using LFE with YAWS, be sure to check out the
-<a href="https://github.com/lfe/yaws-rest-starter">LFE REST example app</a>.
+[LFE REST example app](https://github.com/lfex/yaws-rest-starter).

@@ -193,7 +193,7 @@ Released version of \Yaws\ are available at
 
 To compile and install a \Yaws\  release
 one of the prerequisites is a properly installed \Erlang\  system. \Yaws\
-runs on \Erlang\  releases OTP R8 and later. Get \Erlang\  from
+runs on \Erlang\/OTP releases R14B02 and newer. Get \Erlang\  from
 \url{http://www.erlang.org/}
 
 Compile and install is straight forward:
@@ -1257,6 +1257,31 @@ achieved using the following functions from the \verb+yaws_api+ module:
 All functions operate on instances of the \verb+#headers{}+ record type
 defined in the \verb+yaws_api.hrl+ include file.
 
+Should an arg rewrite function need to return a response for a particular
+request, it can do so by returning an \verb+#arg+ record instance with its
+\verb+state+ field set to an instance of a \verb+#rewrite_response+
+record. For example, below is an arg rewrite function that allows only
+\verb+GET+ and \verb+POST+ requests, returning a 405 \emph{Method Not
+  Allowed} for requests with any other HTTP method:
+
+\begin{verbatim}
+arg_rewrite(Arg) ->
+    Allowed = ['GET', 'POST'],
+    Req = yaws_api:arg_req(Arg),
+    Method = yaws_api:http_request_method(Req),
+    case lists:member(Method, Allowed) of
+        true ->
+            Arg;
+        false ->
+            AllowedStrs = string:join([atom_to_list(M) || M <- Allowed], ","),
+            Arg#arg{state=
+                        #rewrite_response{
+                           status=405,
+                           headers=[{header, {"Allow", AllowedStrs}},
+                                    {header, {connection, "close"}}]}}
+    end.
+\end{verbatim}
+
 \subsection{Authenticating}
 
 Now we're approaching the \verb+login.yaws+ page, the page that
@@ -2225,16 +2250,16 @@ part where options for each virtual host is supplied.
               configured by default.
 
 \item        \verb+id = String+ ---
-              It is possible run multiple Yaws servers on the same machine. We
+              It is possible to run multiple Yaws servers on the same machine. We
               use the id of a Yaws server to control it using the different
               control commands such as:
 \begin{verbatim}
   # /usr/local/bin/yaws --id foobar --stop
 \end{verbatim}
                To stop the Yaws server with id "foobar". Each \Yaws\ server will
-               write its internals data into a file called \$HOME/.yaws/yaws/ID
+               write its internal data into a file called \$HOME/.yaws/yaws/ID
                where ID is the identity of the server. Yaws also creates a file
-               called \$HOME/.yaws/yaws/ID/CTL which contain the port
+               called \$HOME/.yaws/yaws/ID/CTL which contains the port
                number where the server is listening for control commands. The
                default id is "default".
 
@@ -2392,8 +2417,8 @@ part where options for each virtual host is supplied.
                instead of an ETS table. One of the drawbacks of the default
                \verb+yaws_session_server+ implementation is that server side
                cookies are lost when the server restarts. Specifying a different
-               module here will pass all writes/read operations to this module
-               (it must implements appropriate callbacks).
+               module here will pass all write/read operations to this module
+               (it must implement appropriate callbacks).
 
 \item        \verb+runmod = ModuleName+ ---
                At startup \Yaws\ will invoke \verb+ModuleName:start()+ in a
@@ -2430,7 +2455,7 @@ part where options for each virtual host is supplied.
   subconfig = /etc/yaws/vhosts/*.conf
 \end{verbatim}
 
-               Or, relatively to the configuration localtion:
+               Or, relatively to the configuration location:
 
 \begin{verbatim}
   subconfig = global.conf
@@ -2834,7 +2859,7 @@ The following directives are allowed inside a server definition.
              Default is \verb+index_files = index.yaws index.html index.php+.
 
 \item       \verb+appmods = ListOfModuleNames+ ---
-             If any the names in \verb+ListOfModuleNames+ appear as components
+             If any of the names in \verb+ListOfModuleNames+ appear as components
              in the path for a request, the path request parsing will terminate
              and that module will be called. There is also an alternate syntax
              for specifying the appmods if we don't want our internal erlang
@@ -2914,11 +2939,11 @@ The following directives are allowed inside a server definition.
 \item       \verb+errormod_crash = Module+ ---
               It is possible to set a special module that handles the HTML
               generation of server crash messages. The default is to display the
-              entire formated crash message in the browser. This is good for
+              entire formatted crash message in the browser. This is good for
               debugging but not in production.
 
               The function \verb+Module:crashmsg(Arg, SC, Str)+ will be
-              called. The \verb+Str+ is the real crash message formated as a
+              called. The \verb+Str+ is the real crash message formatted as a
               string.
 
               The function must return, \verb+{content,MimeType,Cont}+ or
@@ -2951,7 +2976,12 @@ The following directives are allowed inside a server definition.
               It is possible to install a module that rewrites all the
               \verb+Arg+ \verb+#arg{}+ records at an early stage in the
               \Yaws\ server.  This can be used to do various things such as
-              checking a cookie, rewriting paths etc.
+              checking a cookie, rewriting paths etc. An
+              \verb+arg_rewrite_mod+ must export an \verb+arg_rewrite/1+
+              function taking and returning an \verb+#arg{}+ record. If the
+              function wants to return a response, it must set the
+              \verb+#arg.state+ field of its return value to an instance of
+              the \verb+#rewrite_response{}+ record.
 
               The module \verb+yaws_vdir+ can be used in case you want to serve
               static content that is not located in your docroot. See the
@@ -3106,7 +3136,7 @@ The following directives are allowed inside a server definition.
                 To interpret a \textit{.php} file, the function
                 \verb+Module:Function(Arg)+ will be invoked (evaluated
                 inside an rpc call if a \verb+Node+ is specified),
-                where \verb+Arg+ is a \verb+#arg{}+ record.
+                where \verb+Arg+ is an \verb+#arg{}+ record.
 
                 The function must do the same things that a normal
                 \verb+out/1+ does.
@@ -3118,7 +3148,7 @@ The following directives are allowed inside a server definition.
               \textit{this target is deprecated. use php\_handler target in
                 server part instead}.
 
-              Use this directive is same as:
+              Using this directive is the same as:
               \verb+php_handler = <fcgi, HostPortSpec>+.
 
 \item        \verb+default_type = MimeType+ ---
@@ -3177,6 +3207,12 @@ The following directives are allowed inside a server definition.
                  is also used in the list of acceptable client CAs passed to the
                  client when a certificate is requested.
 
+               \item \verb+dhfile = File+ --- A file containing
+                 PEM-encoded Diffie-Hellman parameters to be used by
+                 the server if a cipher suite using Diffie-Hellman key
+                 exchange is negotiated. If not specified, default
+                 parameters are used.
+
                \item \verb+verify = 0 | 1 | 2 | verify_none | verify_peer+ ---
                  Specifies the level of verification the server does on client
                  certs. 0 means that the server will not ask for a cert
@@ -3217,30 +3253,41 @@ The following directives are allowed inside a server definition.
                  horrible sub-language of its own.  It is documented in the SSL
                  man page for "ciphers".
 
-               \item \verb+secure_renegotiate = true | false+ --- Specifies if
+               \item \verb+secure_renegotiate = true | false+ --- Specifies whether
                  to reject renegotiation attempt that does not live up to RFC
                  5746. By default \verb+secure_renegotiate+ is set to false
                  i.e. secure renegotiation will be used if possible but it will
                  fallback to unsecure renegotiation if the peer does not support
                  RFC 5746.
 
+               \item \verb+client_renegotiation = true | false+ --- Enables or
+                 disables the Erlang/OTP SSL application client
+                 renegotiation option.  Defaults to true. See the
+                 \verb+ssl+ manual page at
+                 http://www.erlang.org/doc/man/ssl.html for more details.
+
+                 \textbf{WARNING: This option was introduced in the SSL application
+                   in Erlang/OTP 18.0, so \Yaws\  ignores it for previous releases.}
+
                \item \verb+honor_cipher_order = true | false+ --- If true (the
                  default), use the server's preference for cipher selection. If
                  false, use the client's preference.
 
-                 \textbf{WARNING: This option was introduced in SSL application
-                   in Erlang/OTP 17.0, so it will be ignored by Yaws for
-                   previous releases.}
+                 \textbf{WARNING: This option was introduced in the SSL application
+                   in Erlang/OTP 17.0, so \Yaws\  ignores it for previous releases.}
 
                  \item \verb+protocol_version = ProtocolList+ ---
                    Specifies the list of SSL protocols that will be
                    supported. If not set, defaults to all protocols
-                   supported by the erlang \verb+ssl+ application. For
+                   supported by the \Erlang\  \verb+ssl+ application. For
                    example, to support only TLS versions 1.2, 1.1, and 1:
 
 \begin{verbatim}
 protocol_version = tlsv1.2, tlsv1.1, tlsv1
 \end{verbatim}
+
+                 \textbf{WARNING: Because of a bug in previous releases,
+                   Erlang/OTP R16B01 or newer is required for this to work.}
                \end{itemize}
 
 \item       \verb+<redirect> ... </redirect>+ ---
@@ -3248,7 +3295,7 @@ protocol_version = tlsv1.2, tlsv1.1, tlsv1
               a matching pair of \verb+<redirect>+ and \verb+</redirect>+
               delimiters.
 
-              We can have a series of redirect rules in one of formats below:
+              We can have a series of redirect rules in one of the formats below:
 \begin{verbatim}
   Path = URL
   Path = code
@@ -3358,10 +3405,22 @@ protocol_version = tlsv1.2, tlsv1.1, tlsv1
                 The usage of User:Password in the actual config file is
                 deprecated as of release 1.51. It is preferred to have the users
                 in a file called \verb+.yaws_auth+ in the actual directory. The
-                \verb+.yaws_auth+ file has to be file parseable by
+                \verb+.yaws_auth+ file has to be parseable by
                 \verb+file:consult/1+.
 
-                Each row of the file must contain terms on the form.
+                Each row of the file must contain terms in this form:
+
+\begin{verbatim}
+{User, Password}.
+\end{verbatim}
+
+                where both \verb+User+ and \verb+Password+ should be
+                strings.
+
+                The \verb+.yaws_auth+ file mechanism is recursive,so any
+                subdirectories of \verb+Dir+ are also automatically
+                protected. The \verb+.yaws_auth+ file is never visible in a
+                dir listing.
 
               \item \verb+pam service = pam-service+ --- If the item \verb+pam+
                 is part of the auth structure, Yaws will also try to
@@ -3755,7 +3814,7 @@ state. It can define one, some or all of the following functions:
 \begin{verbatim}
     WSState :: #ws_state{}
     State   :: term()
-    Result  :: {ok, NewState} {error, Reason}
+    Result  :: {ok, NewState} | {error, Reason}
       NewState :: term()
       Reason   :: term()
 \end{verbatim}
@@ -3763,8 +3822,8 @@ state. It can define one, some or all of the following functions:
   If defined, this function is called when the connection is upgraded from HTTP
   to WebSocket.
 
-  \verb+WSState+ is the state of the WebSocket connection. It can be used to
-  send messages to the client using
+  \verb+WSState+ is the state of the WebSocket connection. It can be used
+  to send messages to the client using
   \verb+yaws_api:websocket_send(WSState, Message)+.
 
   \verb+State+ is the internal state of the callback module.

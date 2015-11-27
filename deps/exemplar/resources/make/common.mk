@@ -2,11 +2,10 @@ ifeq ($(shell which erl),)
 $(error Can't find Erlang executable 'erl')
 exit 1
 endif
-PROJECT = exemplar
+
 LIB = $(PROJECT)
 DEPS = ./deps
 BIN_DIR = ./bin
-EXPM = $(BIN_DIR)/expm
 SOURCE_DIR = ./src
 OUT_DIR = ./ebin
 TEST_DIR = ./test
@@ -63,14 +62,9 @@ get-codepath:
 
 debug: get-erllibs get-codepath
 
-$(EXPM): $(BIN_DIR)
-	@[ -f $(EXPM) ] || \
-	PATH=$(SCRIPT_PATH) lfetool install expm $(BIN_DIR)
-
 get-deps:
 	@echo "Getting dependencies ..."
 	@which rebar.cmd >/dev/null 2>&1 && rebar.cmd get-deps || rebar get-deps
-	@PATH=$(SCRIPT_PATH) $(LFETOOL) update deps
 
 clean-ebin:
 	@echo "Cleaning ebin dir ..."
@@ -150,14 +144,3 @@ push-all:
 install: compile
 	@echo "Installing exemplar ..."
 	@PATH=$(SCRIPT_PATH) lfetool install lfe
-
-upload: $(EXPM) get-version
-	@echo "Preparing to upload exemplar ..."
-	@echo
-	@echo "Package file:"
-	@echo
-	@cat package.exs
-	@echo
-	@echo "Continue with upload? "
-	@read
-	$(EXPM) publish

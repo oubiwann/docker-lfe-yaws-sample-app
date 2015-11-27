@@ -2,10 +2,10 @@
 {application, 'exemplar',
  [
   %% A quick description of the application.
-  {description, "My project description..."},
+  {description, "HTML as S-Expressions for LFE"},
 
   %% The version of the application
-  {vsn, "0.1.0"},
+  {vsn, "0.2.0"},
 
   %% All modules used by the application.
   {modules,

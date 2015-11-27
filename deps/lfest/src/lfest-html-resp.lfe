@@ -9,3 +9,8 @@
 
 (defun ok (html)
   (lfest-resp:ok (html-content html)))
+
+(defun error (status-code html)
+  (lfest-resp:response
+    status-code
+    (html-content html)))

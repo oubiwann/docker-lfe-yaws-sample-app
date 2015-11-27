@@ -6,7 +6,7 @@
 .PP
 Yaws is fast lightweight web server. It reads a configuration file called
 yaws.conf to control its operations. The configuration contains two distinct
-parts a global part which affects all the virtual hosts and a server part where
+parts: a global part which affects all the virtual hosts and a server part where
 options for each virtual host is supplied.
 
 .SH GLOBAL PART
@@ -62,7 +62,7 @@ configured by default.
 
 .TP
 \fBid = String\fR
-It is possible run multiple Yaws servers on the same machine. We use the id of a
+It is possible to run multiple Yaws servers on the same machine. We use the id of a
 Yaws server to control it using the different control commands such as:
 
 .nf
@@ -70,9 +70,9 @@ Yaws server to control it using the different control commands such as:
 .fi
 
 To stop the Yaws server with id "foobar". Each Yaws server will write its
-internals data into a file called $HOME/.yaws/yaws/ID where ID is the identity
+internal data into a file called $HOME/.yaws/yaws/ID where ID is the identity
 of the server. Yaws also creates a file called $HOME/.yaws/yaws/ID/CTL
-which contain the port number where the server is listening for control
+which contains the port number where the server is listening for control
 commands. The default id is \fI"default"\fR.
 
 .TP
@@ -235,8 +235,8 @@ want the Erlang errorlog written to a report.log file.  Default value is
 Allows to specify a different Yaws session storage mechanism instead of an ETS
 table. One of the drawbacks of the default yaws_session_server implementation is
 that server side cookies are lost when the server restarts. Specifying a
-different module here will pass all writes/read operations to this module (it
-must implements appropriate callbacks).
+different module here will pass all write/read operations to this module (it
+must implement appropriate callbacks).
 
 .TP
 \fBrunmod = ModuleName\fR
@@ -246,12 +246,15 @@ Yaws startup shell script for our own application.
 
 .TP
 \fBpick_first_virthost_on_nomatch = true | false\fR
-When Yaws gets a request, it extracts the Host: header from the client request
-to choose a virtual server amongst all servers with the same IP/Port pair.  This
-configuration parameter decides whether Yaws should pick the first (as defined
-in the yaws.conf file) if no name match or not.  In real live hosting scenarios
-we typically want this to be false whereas in testing/development scenarios it
-may be convenient to set it to true. Default is \fItrue\fR.
+When Yaws gets a request, it extracts the Host header from the client
+request to choose a virtual server amongst all servers with the same
+IP/Port pair.  This configuration parameter decides whether Yaws should
+pick the first server (as defined in the yaws.conf file) if no name match
+or not. If this is false and no Host header is present in the request, Yaws
+returns a 400 Bad Request as required by the HTTP standard. In real live
+hosting scenarios we typically want this to be false, whereas in
+testing/development scenarios it may be convenient to set it to
+true. Default is \fItrue\fR.
 
 .TP
 \fBkeepalive_timeout = TimeInMilliseconds | infinity\fR
@@ -272,7 +275,7 @@ by a dot, will be ignored. For example:
   subconfig = /etc/yaws/vhosts/*.conf
 .fi
 
-Or, relatively to the configuration localtion:
+Or, relatively to the configuration location:
 
 .nf
   subconfig = global.conf
@@ -434,7 +437,7 @@ Enable or disable the auth log for this virtual server. Default is \fItrue\fR.
 
 .TP
 \fBaccess_log = true | false\fR
-Setting this directive to false turns of traffic logging for this virtual
+Setting this directive to false turns off traffic logging for this virtual
 server. The default value is \fItrue\fR.
 
 .TP
@@ -502,7 +505,7 @@ the logger.
 \fBshaper = Module\fR
 Defines a module to control access to this virtual server. Access can be
 controlled based on the IP address of the client. It is also possible to
-throttles HTTP requests based on the client's download rate. This module must
+throttle HTTP requests based on the client's download rate. This module must
 implement the behaviour \fIyaws_shaper\fR.
 
 There is no such module configured by default.
@@ -618,7 +621,7 @@ subtypes of that type). Here is an example:
   mime_types = application/xml application/xhtml+xml application/rss+xml
 .fi
 
-By default, following MIME types are compressed (if
+By default, the following MIME types are compressed (if
 \fBdeflate\fR is set to true): \fItext/*, application/rtf, application/msword,
 application/pdf, application/x-dvi, application/javascript,
 application/x-javascript\fR. Multiple \fBmime_types\fR directive can be used.
@@ -644,7 +647,7 @@ when Yaws starts up. Defaults to \fIfalse\fR.
 .TP
 \fBpartial_post_size = Integer | nolimit\fR
 When a Yaws file receives large POSTs, the amount of data received in each chunk
-is determined by the this parameter.  The default value is \fI10240\fR. Setting
+is determined by this parameter.  The default value is \fI10240\fR. Setting
 it to nolimit is potentially dangerous.
 
 
@@ -687,7 +690,7 @@ Default is \fIindex_files = index.yaws index.html index.php\fR.
 
 .TP
 \fBappmods = ListOfModuleNames\fR
-If any the names in ListOfModuleNames appear as components in the path for a
+If any of the names in ListOfModuleNames appear as components in the path for a
 request, the path request parsing will terminate and that module will be
 called. There is also an alternate syntax for specifying the appmods if we don't
 want our internal erlang module names to be exposed in the URL paths.  We can
@@ -713,7 +716,7 @@ is particulaly interesting for '/' appmods.  Here is an example:
 .fi
 
 The above configuration will invoke the 'myapp' erlang module on everything
-except any file found in directories, 'icons', 'js' and 'top/static' relative to
+except any file found in directories 'icons', 'js' and 'top/static' relative to
 the docroot.
 
 .TP
@@ -779,11 +782,11 @@ The function can and must do the same things that a normal \fIout/1\fR does.
 .TP
 \fBerrormod_crash = Module\fR
 It is possible to set a special module that handles the HTML generation of
-server crash messages. The default is to display the entire formated crash
+server crash messages. The default is to display the entire formatted crash
 message in the browser. This is good for debugging but not in production.
 .br
 The function \fIModule:crashmsg(Arg, SC, Str)\fR will be called. The \fIStr\fR
-is the real crash message formated as a string.
+is the real crash message formatted as a string.
 .br
 The function must return, \fI{content,MimeType,Cont}\fR or \fI{html, Str}\fR or
 \fI{ehtml, Term}\fR. That data will be shipped to the client.
@@ -792,13 +795,17 @@ The function must return, \fI{content,MimeType,Cont}\fR or \fI{html, Str}\fR or
 \fBexpires = ListOfExpires\fR
 Controls the setting of the \fIExpires\fR HTTP header and the \fImax-age\fR
 directive of the \fICache-Control\fR HTTP header in server responses for
-specific MIME types. The expiration date can set to be relative to either the
-time the source file was last modified, or to the time of the client
-access. ListOfExpires is defined as follows:
+specific MIME types. The expiration date can be set as relative to either the
+time the source file was last modified; as the time of the client access; or as
+always in order to empty the cache altogether. ListOfExpires is defined as
+follows:
 
 .nf
-  expires = <MimeType1, access+Seconds> <MimeType2, modify+Seconds> ...
+  expires = <MimeType1, access+Seconds> <MimeType2, modify+Seconds> <MimeType3, always> ...
 .fi
+
+A MimeType can also have a wildcard as subtype or both as subtype and type,
+like type/* or */*.
 
 These HTTP headers are an instruction to the client about the document's
 validity and persistence. If cached, the document may be fetched from the cache
@@ -809,14 +816,25 @@ the source. Here is an example:
 .nf
   expires = <image/gif, access+2592000> <image/png, access+2592000>
   expires = <image/jpeg, access+2592000> <text/css, access+2592000>
+  expires = <text/*, always>
+.fi
+
+and here is another:
+
+.nf
+  expires = <*/*, always>
 .fi
 
 .TP
 \fBarg_rewrite_mod = Module\fR
-It is possible to install a module that rewrites all the Arg #arg{} records at
-an early stage in the Yaws server.  This can be used to do various things such
-as checking a cookie, rewriting paths etc.
-.br
+It is possible to install a module that rewrites all the Arg #arg{} records
+at an early stage in the Yaws server.  This can be used to do various
+things such as checking a cookie, rewriting paths etc. An arg_rewrite_mod
+must export an \fIarg_rewrite/1\fR function taking and returning an #arg{}
+record. If the function wants to return a response, it must set the
+#arg.state field of its return value to an instance of the
+#rewrite_response{} record.
+
 The module \fIyaws_vdir\fR can be used in case you want to serve static content
 that is not located in your docroot. See the example at the bottom of this man
 page for how to use the \fIopaque\fR + \fIvdir\fR elements to instruct the
@@ -971,7 +989,7 @@ allowed).
 .RS 12
 To interpret a .php file, the function \fIModule:Function(Arg)\fR will be
 invoked (Evaluated inside a rpc call if a \fINode\fR is specified), where Arg is
-a #arg{} record.
+an #arg{} record.
 .br
 The function must do the same things that a normal out/1 does.
 .RE
@@ -984,7 +1002,7 @@ Default value is \fI<cgi, "/usr/bin/php-cgi">\fR.
 \fBthis target is deprecated. use 'php_handler' target in server part
 instead.\fR
 .br
-Use this directive is same as: php_handler = <fcgi, Host:Port>.
+Using this directive is the same as: php_handler = <fcgi, Host:Port>.
 
 .TP
 \fBdefault_type = MimeType\fR
@@ -1050,6 +1068,14 @@ certificate is requested.
 .RE
 
 .IP
+\fBdhfile = File\fR
+.RS 12
+A file containing PEM-encoded Diffie-Hellman parameters to be used by
+the server if a cipher suite using Diffie-Hellman key exchange is
+negotiated. If not specified, default parameters are used.
+.RE
+
+.IP
 \fBverify = 0 | 1 | 2 | verify_none | verify_peer\fR
 .RS 12
 Specifies the level of verification the server does on client certs.  0 means
@@ -1088,8 +1114,8 @@ this to 0.
 .IP
 \fBpassword = String\fR
 .RS 12
-String If the private key is encrypted on disc, this password is the 3Dee key to
-decrypt it.
+If the private key is encrypted on disc, this password is the
+3DES key to decrypt it.
 .RE
 
 .IP
@@ -1107,10 +1133,21 @@ ciphers = "[{dhe_rsa,aes_256_cbc,sha}, \\
 .IP
 \fBsecure_renegotiate = true | false\fR
 .RS 12
-Specifies if to reject renegotiation attempt that does not live up to RFC
-5746. By default \fBsecure_renegotiate\fR is set to false i.e. secure
+Specifies whether to reject renegotiation attempt that does not live up to
+RFC 5746. By default \fBsecure_renegotiate\fR is set to false i.e. secure
 renegotiation will be used if possible but it will fallback to unsecure
 renegotiation if the peer does not support RFC 5746.
+.RE
+
+.IP
+\fBclient_renegotiation = true | false\fR
+.RS 12
+Enables or disables the Erlang/OTP SSL application client renegotiation
+option. Defaults to true. See the \fIssl\fR manual page at
+http://www.erlang.org/doc/man/ssl.html for more details.
+
+\fBWARNING: This option was introduced in the SSL application in Erlang/OTP
+18.0, so Yaws ignores it for previous releases.\fR
 .RE
 
 .IP
@@ -1119,14 +1156,13 @@ renegotiation if the peer does not support RFC 5746.
 If true (the default), use the server's preference for cipher selection. If
 false, use the client's preference.
 
-\fBWARNING: This option was introduced in SSL application in Erlang/OTP 17.0, so
-it will be ignored by Yaws for previous releases.\fR
+\fBWARNING: This option was introduced in the SSL application in Erlang/OTP
+17.0, so Yaws ignores it for previous releases.\fR
 .RE
 
 .IP
 \fBprotocol_version = ProtocolList\fR
 .RS 12
-
 Specifies the list of SSL protocols that will be supported. If not set,
 defaults to all protocols supported by the erlang \fBssl\fR
 application. For example, to support only TLS versions 1.2, 1.1, and 1:
@@ -1134,6 +1170,10 @@ application. For example, to support only TLS versions 1.2, 1.1, and 1:
 
 protocol_version = tlsv1.2, tlsv1.1, tlsv1
 .fi
+
+\fBWARNING: Erlang/OTP R16B01 or higher is required in order to let it work
+(because of a bug in previous releases).\fR
+
 .RE
 
 .TP
@@ -1141,7 +1181,7 @@ protocol_version = tlsv1.2, tlsv1.1, tlsv1
 Defines a redirect mapping. The following items are allowed within a matching
 pair of <redirect> and </redirect> delimiters.
 
-We can have a series of redirect rules in one of formats below:
+We can have a series of redirect rules in one of the formats below:
 
 .nf
   Path = URL
@@ -1263,19 +1303,19 @@ obviously have several of these value inside a single <auth> </auth> pair.
 
 The usage of User:Password in the actual config file is deprecated as of release
 1.51. It is preferred to have the users in a file called \fI.yaws_auth\fR in the
-actual directory. The .yaws_auth file has to be file parseable by
-\fIfile:consult/1\fR
+actual directory. The .yaws_auth file has to be parseable by \fIfile:consult/1\fR.
 
-Each row of the file must contain terms on the form
+Each row of the file must contain terms in this form:
 
 .nf
     {User, Password}.
 .fi
 
-Where both User and Password should be strings. The .yaws_auth file mechanism is
-recursive. Thus any subdirectories to Dir are automatically also protected.
+where both User and Password should be strings.
 
-The .yaws_auth file is never visible in a dir listing
+The .yaws_auth file mechanism is recursive, so any subdirectories of Dir
+are also automatically protected. The .yaws_auth file is never visible in a
+dir listing.
 .RE
 
 .IP

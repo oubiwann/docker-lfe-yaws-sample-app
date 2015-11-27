@@ -41,7 +41,7 @@ Just add it to your ``rebar.config`` deps:
 
 {deps, [
     ...
-    {lfest, ".*", {git, "git@github.com:lfe/lfest.git", "master"}}
+    {lfest, ".*", {git, "git@github.com:lfex/lfest.git", "master"}}
   ]}.
 ```
 
@@ -97,10 +97,11 @@ Here is an example:
     (lfest-json-resp:not-found "Bad path: invalid operation.")))
 ```
 
-Note that this creates the ``routes/3`` function which can then be called
-in the ``out/1`` function.
+Note that this creates a ``routes/3`` function which can then be called
+in the ``out/1`` function that is required of a [YAWS appmod](http://yaws.hyber.org/appmods.yaws) module.
+For an example of this in action, see [this mini REST-api](https://github.com/lfex/yaws-rest-starter/blob/master/src/yrests-store-3.lfe).
 
-A few important things to note here:
+A few important things to note here:) 
 
 * Each route is composed of an HTTP verb, a path, and a function to execute
   should both the verb and path match.

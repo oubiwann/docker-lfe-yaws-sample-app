@@ -43,6 +43,7 @@ install-data-local: all
 	$(AM_V_at)$(INSTALL) -d $(DESTDIR)$(sysconfdir)/yaws
 	$(AM_V_at)$(INSTALL) -m 644 @srcdir@/ssl/yaws-cert.pem $(DESTDIR)$(sysconfdir)/yaws
 	$(AM_V_at)$(INSTALL) -m 644 @srcdir@/ssl/yaws-key.pem $(DESTDIR)$(sysconfdir)/yaws
+	$(AM_V_at)$(INSTALL) -m 644 @srcdir@/ssl/dhparams.pem $(DESTDIR)$(sysconfdir)/yaws
 
 	@echo "-------------------------------"
 	@echo
@@ -54,12 +55,18 @@ install-data-local: all
 	@echo "** man files went into        $(mandir)"
 	@echo "** default docroot went into  $(wwwdir)"
 
-	$(AM_V_at)if test $(yawsdir) != $(ERLANG_INSTALL_LIB_DIR_yaws); then	\
-	  $(INSTALL) -d $(DESTDIR)$(libdir);					\
-	  rm -f $(DESTDIR)$(libdir)/yaws;					\
-	  $(LN_S) -f $(ERLANG_INSTALL_LIB_DIR_yaws) $(DESTDIR)$(libdir)/yaws;	\
-	  echo;									\
-	  echo "create link $(ERLANG_INSTALL_LIB_DIR_yaws) -> $(yawsdir)";	\
+	$(AM_V_at)if test $(yawsdir) != $(ERLANG_INSTALL_LIB_DIR_yaws); then    	\
+	  echo;                                                                 	\
+	  if test -d $(DESTDIR)$(yawsdir) && test ! -h $(DESTDIR)$(yawsdir); then	\
+	      backupdir="$(DESTDIR)$(yawsdir).backup";                      		\
+	      echo "backup old yaws directory into $${backupdir}";              	\
+	      mv $(DESTDIR)$(yawsdir) $${backupdir};                        		\
+	  else                                                                  	\
+	      $(INSTALL) -d `dirname $(yawsdir)`;					\
+	      rm -f $(DESTDIR)$(yawsdir);	                                	\
+	  fi;                                                                   	\
+	  $(LN_S) -f $(ERLANG_INSTALL_LIB_DIR_yaws) $(DESTDIR)$(yawsdir);   		\
+	  echo "create link $(ERLANG_INSTALL_LIB_DIR_yaws) -> $(yawsdir)";      	\
 	fi
 
 	@echo
@@ -71,6 +78,7 @@ uninstall-local:
 	$(AM_V_at)[ ! -h $(yawsdir) ] || rm -f $(DESTDIR)$(libdir)/yaws
 	$(AM_V_at)rm -r $(DESTDIR)$(sysconfdir)/yaws/yaws-cert.pem
 	$(AM_V_at)rm -r $(DESTDIR)$(sysconfdir)/yaws/yaws-key.pem
+	$(AM_V_at)rm -r $(DESTDIR)$(sysconfdir)/yaws/dhparams.pem
 
 debug:
 	$(MAKE) DEBUG_ERLC_FLAGS=" -Ddebug" CFLAGS="-Werror -Wall -O0 -g"
@@ -122,13 +130,13 @@ distclean-local:
 
 
 mkinstaller: cleaninstaller
-	$(AM_V_at)if [ -z $(UNIX2DOS) -a -z $(TODOS) ]; then	\
-	  echo "No unix2dos/todos program found";		\
-	  echo "Run apt-get install dos2unix/tofrodos";		\
-	  exit 1;						\
+	$(AM_V_at)if [ -z "$(UNIX2DOS)" -a -z "$(TODOS)" ]; then \
+	  echo "No unix2dos/todos program found";		 \
+	  echo "Run apt-get install dos2unix/tofrodos";		 \
+	  exit 1;						 \
 	fi
 
-	$(AM_V_at)if [ ! -d $(INSTALL_BUILDER) ]; then			\
+	$(AM_V_at)if [ ! -d "$(INSTALL_BUILDER)" ]; then		\
 	  echo "No installer-builder found";				\
 	  echo "For more information, read win32/README.developer";	\
 	  exit 1;							\

@@ -5,7 +5,7 @@
 
 ;; The compose macros are included here to allow for easy use in the REPL when
 ;; one slurps this module.
-(include-lib "include/compose-macros.lfe")
+(include-lib "clj/include/compose.lfe")
 
 (defun uuid4 ()
   "Adapted from the implementation given here:
@@ -41,25 +41,48 @@
   (((tuple 'type 'atom))
     (binary_to_atom (uuid4) 'latin1)))
 
+(defun get-app-version
+  ((name) (when (is_atom name))
+    (get-app-src-version
+      (code:where_is_file (++ (atom_to_list name) ".app"))))
+  ((name) (error "App name must be an atom.")))
+
 (defun get-app-src-version (filename)
-  (let* (((tuple 'ok (list app)) (file:consult filename)))
+  "Deprecated; kept for projects still using it."
+  (let (((tuple 'ok (list app)) (file:consult filename)))
     (proplists:get_value 'vsn (element 3 app))))
 
 (defun get-lfe-version ()
-  (get-app-src-version '"deps/lfe/src/lfe.app.src"))
+  (get-app-version 'lfe))
 
 (defun get-version ()
+  (get-app-version 'lutil))
+
+(defun get-versions ()
   `(#(erlang ,(erlang:system_info 'otp_release))
     #(emulator ,(erlang:system_info 'version))
     #(driver-version ,(erlang:system_info 'driver_version))
-    #(lfe ,(get-lfe-version))))
-
-(defun get-lutil-version ()
-  (get-app-src-version "src/lutil.app.src"))
-
-(defun get-versions ()
-  (++ (get-version)
-      `(#(lutil ,(get-lutil-version)))))
+    #(lfe ,(get-lfe-version))
+    #(lutil ,(get-version))))
 
 (defun check (x)
   (=/= x 'false))
+
+(defun get-env-funcs (env)
+  (lists:sort
+    (lists:map
+      (lambda (x)
+        (element 1 x))
+      (element 3 env))))
+
+(defun warn (msg)
+  (warn msg '()))
+
+(defun warn (msg args)
+  (lfe_io:format (++ msg "~n") args))
+
+(defun deprecated ()
+  (deprecated "This functionality has been deprecated."))
+
+(defun deprecated (msg)
+  (warn (++ "Deprecated: " msg)))

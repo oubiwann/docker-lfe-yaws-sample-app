@@ -26,7 +26,6 @@ STATIC_MODULES = yaws.erl			\
 		 yaws_appmod_dav.erl		\
 		 yaws_runmod_lock.erl		\
 		 yaws_pam.erl			\
-		 json.erl			\
 		 json2.erl			\
 		 jsonrpc.erl			\
 		 yaws_jsonrpc.erl		\
@@ -46,18 +45,12 @@ STATIC_MODULES = yaws.erl			\
 		 yaws_shaper.erl		\
 		 yaws_dime.erl			\
 		 yaws_exhtml.erl		\
-		 yaws_sse.erl
+		 yaws_sse.erl			\
+		 yaws_websockets.erl
 
 EXTRA_DIST = $(STATIC_MODULES) yaws_websockets.erl yaws_debug.hrl	\
 	     yaws_generated.template yaws.app.src yaws.app.src.script	\
 	     yaws.appup.src
-
-## the websocket code uses new modern bits stuff
-if BITS_SUPPORT
-BITSMODS = yaws_websockets.erl
-endif
-
-STATIC_MODULES += $(BITSMODS)
 
 GENERATED_MODULES = yaws_generated.erl mime_types.erl
 MODULES           = $(STATIC_MODULES) $(GENERATED_MODULES)
@@ -92,7 +85,8 @@ yaws_generated.erl: @srcdir@/yaws_generated.template @top_srcdir@/vsn.mk \
 	    @abs_top_srcdir@/scripts/gen-yaws-generated) > yaws_generated.erl
 
 
-mime_types.erl: @top_builddir@/priv/mime.types $(EBIN_DIR)/mime_type_c.beam
+mime_types.erl: @top_builddir@/priv/mime.types $(EBIN_DIR)/mime_type_c.beam \
+		$(EBIN_DIR)/yaws.beam
 	$(AM_V_GEN)$(ERL) -noshell -pa $(EBIN_DIR) -s mime_type_c generate
 
 $(EBIN_DIR)/yaws.app: @srcdir@/yaws.app.src

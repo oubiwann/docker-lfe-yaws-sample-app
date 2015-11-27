@@ -183,19 +183,10 @@ dnl Get ERTS version.
 ERLANG_CHECK_ERTS
 ERLANG_CHECK_RELEASE
 
-dnl Check for bitstring support, introduced in R12B-5 (ERTS 5.6.5)
-AC_MSG_CHECKING([for bits support])
-AX_COMPARE_VERSION([${ERLANG_ERTS_VER}], [ge], [5.6.5],
-    [bits_support="yes"],
-    [bits_support="no"])
-AC_MSG_RESULT([${bits_support}])
-
-BITS_SUPPORT=false
-if test "x${bits_support}" = "xyes"; then
-        BITS_SUPPORT=true
-fi
-AM_CONDITIONAL(BITS_SUPPORT, [test "x${BITS_SUPPORT}" = "xtrue"])
-AC_SUBST(BITS_SUPPORT)
+dnl Require Erlang >=R14B02 (ERTS 5.8.3) is required.
+AX_COMPARE_VERSION([${ERLANG_ERTS_VER}], [ge], [5.8.3],
+    [],
+    [AC_MSG_ERROR([Erlang R14B02 or higher is required but only Erlang $ERLANG_RELEASE was found!])])
 
 dnl Unicode module was buggy for R14B04 and previous (ERTS <= 5.8.5)
 AC_MSG_CHECKING([for buggy unicode module])
@@ -238,6 +229,34 @@ if test "x${ssl_honor_cipher_order}" = "xyes"; then
 fi
 AM_CONDITIONAL(HAVE_SSL_HONOR_CIPHER_ORDER, [test "x$HAVE_SSL_HONOR_CIPHER_ORDER" = "xtrue"])
 AC_SUBST(HAVE_SSL_HONOR_CIPHER_ORDER)
+
+dnl Check for support of client_renegotiation SSL option (ERTS >= 7.0)
+AC_MSG_CHECKING([for support of client_renegotiation SSL option])
+AX_COMPARE_VERSION([${ERLANG_ERTS_VER}], [ge], [7.0],
+    [ssl_client_renegotiation="yes"],
+    [ssl_client_renegotiation="no"])
+AC_MSG_RESULT([${ssl_client_renegotiation}])
+
+HAVE_SSL_CLIENT_RENEGOTIATION=false
+if test "x${ssl_client_renegotiation}" = "xyes"; then
+        HAVE_SSL_CLIENT_RENEGOTIATION=true
+fi
+AM_CONDITIONAL(HAVE_SSL_CLIENT_RENEGOTIATION, [test "x$HAVE_SSL_CLIENT_RENEGOTIATION" = "xtrue"])
+AC_SUBST(HAVE_SSL_CLIENT_RENEGOTIATION)
+
+dnl Check for support of log_alert SSL option (ERTS >= 5.10.3)
+AC_MSG_CHECKING([for support of log_alert SSL option])
+AX_COMPARE_VERSION([${ERLANG_ERTS_VER}], [ge], [5.10.3],
+    [ssl_log_alert="yes"],
+    [ssl_log_alert="no"])
+AC_MSG_RESULT([${ssl_log_alert}])
+
+HAVE_SSL_LOG_ALERT=false
+if test "x${ssl_log_alert}" = "xyes"; then
+        HAVE_SSL_LOG_ALERT=true
+fi
+AM_CONDITIONAL(HAVE_SSL_LOG_ALERT, [test "x$HAVE_SSL_LOG_ALERT" = "xtrue"])
+AC_SUBST(HAVE_SSL_LOG_ALERT)
 
 dnl Determine directories for installation.
 if test "x${prefix}" != "xNONE" -a "x${ERLANG_INSTALL_LIB_DIR}" = "x"; then
@@ -395,6 +414,20 @@ fi
 AM_CONDITIONAL(HAVE_INET_PARSE_STRICT_ADDRESS, [test "x$INET_PARSE_STRICT_ADDRESS" = "xtrue"])
 AC_SUBST(HAVE_INET_PARSE_STRICT_ADDRESS)
 
+dnl erlang:now/0 is deprecated in erts 7.0 and newer
+AC_MSG_CHECKING([for erlang:now/0])
+AX_COMPARE_VERSION([${ERLANG_ERTS_VER}], [lt], [7.0],
+    [have_erlang_now="yes"],
+    [have_erlang_now="no"])
+AC_MSG_RESULT([${have_erlang_now}])
+
+HAVE_ERLANG_NOW=false
+if test "x${have_erlang_now}" = "xyes"; then
+        HAVE_ERLANG_NOW=true
+fi
+AM_CONDITIONAL(HAVE_ERLANG_NOW, [test "x$HAVE_ERLANG_NOW" = "xtrue"])
+AC_SUBST(HAVE_ERLANG_NOW)
+
 dnl ------------------------------------------------------------------
 dnl Check for programs used during Yaws compilation/installation
 dnl ------------------------------------------------------------------
@@ -522,6 +555,9 @@ AC_CONFIG_FILES([
         test/t9/Makefile
         test/t10/Makefile
         test/t11/Makefile
+        test/t12/Makefile
+        test/t13/Makefile
+        test/t14/Makefile
         applications/chat/Makefile
         applications/chat/src/Makefile
         applications/chat/ebin/Makefile
@@ -557,6 +593,9 @@ AC_CONFIG_FILES([
         test/t9/yaws.conf
         test/t10/yaws.conf
         test/t11/yaws.conf
+        test/t12/yaws.conf
+        test/t13/yaws.conf
+        test/t14/yaws.conf
 ])
 AC_CONFIG_FILES([scripts/make-release],                  [chmod +x scripts/make-release])
 AC_CONFIG_FILES([applications/wiki/scripts/addFile],     [chmod +x applications/wiki/scripts/addFile])
