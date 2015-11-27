@@ -9,8 +9,8 @@ ENV LFE_DEPS $DEPS_DIR/lutil:$DEPS_DIR/exemplar:$DEPS_DIR/lfest
 ENV DEPS $YAWS_DIR:$LFE_DEPS:$DEPS_DIR/ibrowse
 ENV ERL_LIBS $ERL_LIBS:/opt/erlang/lfe:$DEPS
 
-RUN apt-get update && apt-get install -y \
-        libpam0g-dev
+RUN apt-get -f install -y
+RUN apt-get install -y libpam0g-dev
 
 RUN git clone $APP_REPO $APP_DIR && \
         cd $APP_DIR && \
