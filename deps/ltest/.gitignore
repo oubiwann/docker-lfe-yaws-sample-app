@@ -1,0 +1,10 @@
+.eunit
+rebar/*
+.rebar/*
+deps
+*.sublime-project
+*.sublime-workspace
+*.beam
+bin
+ebin
+erl_crash.dump
