@@ -17,6 +17,8 @@ RUN git clone $APP_REPO $APP_DIR && \
         ln -s $LFE_HOME $DEPS_DIR/lfe && \
         rebar compile
 
+RUN cp $DEPS_DIR/*/ebin/* $APP_DIR/ebin/
+
 EXPOSE 5099
 
 CMD sh -c "/opt/sample-app/bin/daemon;while true; do sleep 10; done"
