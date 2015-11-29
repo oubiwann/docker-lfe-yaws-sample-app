@@ -18,8 +18,11 @@ To run the Docker image you need to have docker installed and running. Then
 simply run the following:
 
 ```bash
-$ docker run oubiwann/lfe-yaws-sample-app
+$ docker run -p 5099:5099 -t oubiwann/lfe-yaws-sample-app:latest
 ```
+
+You don't need the source code for that command; it will pull from Docker Hub.
+
 
 ## Builing
 
@@ -28,6 +31,7 @@ from Docker Hub:
 
 ```bash
 $ git clone git@github.com:oubiwann/docker-lfe-yaws-sample-app.git
+$ cd docker-lfe-yaws-sample-app
 $ make docker-build
 $ make docker-run
 ```
