@@ -6,9 +6,11 @@
 
 This repo is featured in
 [this](http://blog.lfe.io/tutorials/2014/12/07/1837-running-lfe-in-docker/) as
-well as [this one](). The former goes into more detail on how to run LFE in
-docker, which the second one is an update showing how to use the Docker image
-genereated from this repo as quickly as possible.
+well as
+[this one](http://blog.lfe.io/tutorials/2015/11/28/2110-lfe-yaws-docker-update/).
+The former goes into more detail on how to run LFE in docker, which the second
+one is an update showing how to use the Docker image genereated from this repo
+as quickly as possible.
 
 ## Use
 
@@ -16,7 +18,7 @@ To run the Docker image you need to have docker installed and running. Then
 simply run the following:
 
 ```bash
-$ docker run lfex/lfe-yaws-sample-app
+$ docker run oubiwann/lfe-yaws-sample-app
 ```
 
 ## Builing
