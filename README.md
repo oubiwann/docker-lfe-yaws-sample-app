@@ -1,6 +1,6 @@
 # sample-app
 
-*An example repo for running LFE and custom LFE apps in Docker*
+*An example LFE/YAWS Web App Running on Docker*
 
 ## Introduction
 
