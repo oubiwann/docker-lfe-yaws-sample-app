@@ -24,7 +24,7 @@ $ docker run -p 5099:5099 -t oubiwann/lfe-yaws-sample-app:latest
 You don't need the source code for that command; it will pull from Docker Hub.
 
 
-## Builing
+## Building
 
 If you should choose to build the Docker image yourself instead of getting it
 from Docker Hub:
