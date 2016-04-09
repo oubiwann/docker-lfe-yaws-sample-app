@@ -1,3 +1,0 @@
-
-Small script to generate a selfsigned cert. To make it a wildcard
-cert, just enter *.mydomain.com for the common name

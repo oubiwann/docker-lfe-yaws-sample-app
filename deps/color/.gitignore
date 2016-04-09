@@ -1,4 +1,0 @@
-*.dump
-*.beam
-.eunit/
-Session.vim

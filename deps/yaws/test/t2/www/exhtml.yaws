@@ -1,5 +1,0 @@
-<erl>
-out(_Arg) ->
-    Struct = {p, [{id, <<"foo">>}], <<"bar">>},
-    {exhtml, Struct}.
-</erl>
