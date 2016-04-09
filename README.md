@@ -1,30 +1,42 @@
-# sample-app
+# LFE+YAWS: Docker
 
-*An example LFE/YAWS Web App Running on Docker*
+*A Sample LFE+YAWS Web Application Running on Docker*
 
-## Introduction
 
-This repo is featured in
-[this](http://blog.lfe.io/tutorials/2014/12/07/1837-running-lfe-in-docker/) as
-well as
-[this one](http://blog.lfe.io/tutorials/2015/11/28/2110-lfe-yaws-docker-update/).
+#### Contents
+
+* [Introduction](#introduction-)
+* [Use](#use-)
+* [Building](#building-)
+
+
+## Introduction [&#x219F;](#contents)
+
+This repo is featured in following LFE blog posts:
+
+* [Running LFE in Docker](http://blog.lfe.io/tutorials/2014/12/07/1837-running-lfe-in-docker/)
+* [LFE+YAWS Docker Update](http://blog.lfe.io/tutorials/2015/11/28/2110-lfe-yaws-docker-update/).
+
 The former goes into more detail on how to run LFE in docker, which the second
 one is an update showing how to use the Docker image genereated from this repo
 as quickly as possible.
 
-## Use
+The code for the actual LFE+YAWS sample app resides in the
+[lfeyawsdemo](https://github.com/lfex/lfeyawsdemo) repository. The
+
+## Use [&#x219F;](#contents)
 
 To run the Docker image you need to have docker installed and running. Then
 simply run the following:
 
 ```bash
-$ docker run -p 5099:5099 -t lfex/lfe-yaws-sample-app:latest
+$ docker run -p 5099:5099 -t lfex/lfe-yaws-sample-app
 ```
 
 You don't need the source code for that command; it will pull from Docker Hub.
 
 
-## Building
+## Building [&#x219F;](#contents)
 
 If you should choose to build the Docker image yourself instead of getting it
 from Docker Hub:
