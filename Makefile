@@ -8,7 +8,7 @@ ROOT_DIR = $(shell pwd)
 PRIV_DIR = $(ROOT_DIR)/priv
 LOG_DIR = $(ROOT_DIR)/log
 EBIN_DIR = $(ROOT_DIR)/ebin
-PA_DIRS = $(shell find $(ROOT_DIR)/_build -maxdepth 3 -mindepth 3 -exec printf "%s -pa " {} \;)
+PA_DIRS = $(shell find $(ROOT_DIR)/_build -maxdepth 3 -mindepth 3 -exec printf "%s/ebin --pa " {} \;)
 
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ### Docker make targets
@@ -39,20 +39,20 @@ yaws: $(YAWS_DIR)/configure $(PRIV_DIR) lfe.config
 
 run: compile
 	@$(YAWS_DIR)/bin/yaws -i \
-	-pa $(PA_DIRS) ebin \
+	--pa $(PA_DIRS) ebin \
 	--conf $(APP_DIR)/priv/etc/yaws.conf \
 	--id $(YAWS_ID)
 
 daemon: compile
 	@$(YAWS_DIR)/bin/yaws \
-	-pa $(PA_DIRS) ebin \
+	--pa $(PA_DIRS) ebin \
 	-D --heart \
 	--conf $(APP_DIR)/priv/etc/yaws.conf \
 	--id $(YAWS_ID)
 
 stop:
 	@$(YAWS_DIR)/bin/yaws \
-	-pa $(PA_DIRS) ebin \
+	--pa $(PA_DIRS) ebin \
 	--stop --id $(YAWS_ID)
 
 ### >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
